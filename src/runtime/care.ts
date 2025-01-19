@@ -1,6 +1,6 @@
 import type { ModuleOptions } from '../module'
 
-interface ErrorDetail {
+interface ErrorPayload {
   name: string
   message: string
   stack: string
@@ -8,19 +8,19 @@ interface ErrorDetail {
 }
 
 export const careVueError = (error: unknown, config: ModuleOptions) => {
-  sendError('vue:error', error as unknown as ErrorDetail, config)
+  sendError('vue:error', error as unknown as ErrorPayload, config)
 }
 
 export const careAppError = (error: unknown, config: ModuleOptions) => {
-  sendError('app:error', error as unknown as ErrorDetail, config)
+  sendError('app:error', error as unknown as ErrorPayload, config)
 }
 
 export const careNitroError = (error: unknown, config: ModuleOptions) => {
-  sendError('nitro:error', error as unknown as ErrorDetail, config)
+  sendError('nitro:error', error as unknown as ErrorPayload, config)
 }
 
-const sendError = async (hook: string, error: ErrorDetail, config: ModuleOptions) => {
-  const errorInfo = {
+const sendError = async (hook: string, error: ErrorPayload, config: ModuleOptions) => {
+  const payload = {
     hook: hook,
     name: error.name,
     message: error.message,

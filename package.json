@@ -1,8 +1,8 @@
 {
-  "name": "core",
-  "version": "1.0.0",
+  "name": "care",
+  "version": "0.0.1",
   "description": "Fume Care Nuxt module",
-  "repository": "fumeapp/core",
+  "repository": "fumeapp/care",
   "license": "MIT",
   "type": "module",
   "exports": {
