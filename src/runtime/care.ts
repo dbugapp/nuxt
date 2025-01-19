@@ -40,7 +40,7 @@ const sendError = async (hook: string, error: ErrorPayload, config: ModuleOption
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         apiKey: config.apiKey,
-        environment: 'produvtion',
+        environment: 'production',
         payload: JSON.stringify(payload),
       }),
     })
