@@ -17,7 +17,7 @@ declare module 'nuxt/schema' {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'care',
+    name: 'fume.care',
     configKey: 'care',
   },
   // Default configuration options of the Nuxt module

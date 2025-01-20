@@ -1,4 +1,7 @@
-import type { ModuleOptions } from '../module'
+interface Config {
+  apiKey: string
+  apiDomain?: string
+}
 
 interface ErrorPayload {
   name: string
@@ -15,19 +18,19 @@ interface ErrorPayload {
   }
 }
 
-export const careVueError = (error: unknown, config: ModuleOptions) => {
+export const careVueError = (error: unknown, config: Config) => {
   sendError('vue:error', error as unknown as ErrorPayload, config)
 }
 
-export const careAppError = (error: unknown, config: ModuleOptions) => {
+export const careAppError = (error: unknown, config: Config) => {
   sendError('app:error', error as unknown as ErrorPayload, config)
 }
 
-export const careNitroError = (error: unknown, config: ModuleOptions) => {
+export const careNitroError = (error: unknown, config: Config) => {
   sendError('nitro:error', error as unknown as ErrorPayload, config)
 }
 
-const sendError = async (hook: string, error: ErrorPayload, config: ModuleOptions) => {
+const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
   const payload: ErrorPayload = {
     name: error.name,
     message: error.message,
