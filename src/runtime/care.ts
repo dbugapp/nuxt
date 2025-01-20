@@ -4,7 +4,15 @@ interface ErrorPayload {
   name: string
   message: string
   stack: string
+  hook: string
   cause: string
+  client: boolean
+  timestamp: number
+  os: {
+    platform: string
+    arch: string
+    version: string
+  }
 }
 
 export const careVueError = (error: unknown, config: ModuleOptions) => {
@@ -20,14 +28,14 @@ export const careNitroError = (error: unknown, config: ModuleOptions) => {
 }
 
 const sendError = async (hook: string, error: ErrorPayload, config: ModuleOptions) => {
-  const payload = {
-    hook: hook,
+  const payload: ErrorPayload = {
     name: error.name,
     message: error.message,
     stack: error.stack,
+    hook: hook,
     cause: error.cause,
-    timestamp: Math.floor(Date.now() / 1000),
     client: import.meta.client,
+    timestamp: Math.floor(Date.now() / 1000),
     os: {
       platform: process.platform,
       arch: process.arch,
