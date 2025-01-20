@@ -1,7 +1,4 @@
-interface Config {
-  apiKey: string
-  apiDomain?: string
-}
+import type { ModuleOptions as Config } from '../module'
 
 interface ErrorPayload {
   name: string
