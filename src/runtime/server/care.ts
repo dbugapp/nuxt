@@ -1,4 +1,4 @@
-import type { ModuleOptions } from '../module'
+import type { ModuleOptions } from '../../module'
 
 interface ErrorPayload {
   name: string
@@ -13,14 +13,6 @@ interface ErrorPayload {
     arch: string
     version: string
   }
-}
-
-export const careVueError = (error: unknown, config: ModuleOptions) => {
-  sendError('vue:error', error as unknown as ErrorPayload, config)
-}
-
-export const careAppError = (error: unknown, config: ModuleOptions) => {
-  sendError('app:error', error as unknown as ErrorPayload, config)
 }
 
 export const careNitroError = (error: unknown, config: ModuleOptions) => {
