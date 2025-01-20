@@ -28,6 +28,6 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
 
     addPlugin(resolver.resolve('./runtime/plugin'))
-    addServerPlugin(resolver.resolve('./runtime/nitro.ts'))
+    addServerPlugin(resolver.resolve('./runtime/server/plugins/care.ts'))
   },
 })
