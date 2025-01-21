@@ -1,4 +1,5 @@
-import { defineNuxtModule, addPlugin, addServerPlugin, createResolver } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, addServerPlugin, createResolver, useRuntimeConfig } from '@nuxt/kit'
+import { careReportConfig } from './runtime/care'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -24,8 +25,12 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     apiDomain: 'https://fume.care',
   },
-  setup(_options, _nuxt) {
+  setup(_options, nuxt) {
     const resolver = createResolver(import.meta.url)
+
+    const config = useRuntimeConfig().public.care
+
+    nuxt.hook('modules:done', () => careReportConfig(config))
 
     addPlugin(resolver.resolve('./runtime/plugin'))
     addServerPlugin(resolver.resolve('./runtime/nitro'))

@@ -26,13 +26,16 @@ const validApiKey = (config: Config): boolean => {
   return /^[a-z0-9]{32}$/.test(config.apiKey)
 }
 
-export const careCheckConfig = (config: Config): boolean => {
+export const careReportConfig = (config: Config) => {
   if (!validApiKey(config)) {
-    log.info('[fume.care] Invalid or missing API key - reporting muted.')
+    log.info('[fume.care] No valid API Key discovered - reporting muted')
   }
   else {
-    log.success('[fume.care] Valid API key found - reporting errors.')
+    log.success('[fume.care] Valid API key found - reporting activated')
   }
+}
+
+export const careCheckConfig = (config: Config): boolean => {
   return validApiKey(config)
 }
 
@@ -66,10 +69,10 @@ const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
       }),
     })
     const data = await response.json()
-    console.log('Error sent successfully:', data.meta)
+    log.success('[fume.care] Error sent successfully:', data.meta)
     return data
   }
   catch (err) {
-    console.error('Failed to send error:', err)
+    log.error('[fume.care] Failed to send error:', err)
   }
 }
