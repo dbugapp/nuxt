@@ -1,10 +1,9 @@
 import { defineNitroPlugin, useRuntimeConfig } from 'nitropack/runtime'
 import type { ModuleOptions } from '../module'
-import { careNitroError } from './care'
+import { CareHookType, careCheckConfig, careReport } from './care'
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('error', async (error, { event }) => {
-    const config = useRuntimeConfig(event).public.care as Required<ModuleOptions>
-    careNitroError(error, config)
-  })
+  const config = useRuntimeConfig().public.care as Required<ModuleOptions>
+  if (careCheckConfig(config))
+    nitroApp.hooks.hook('error', async error => careReport(CareHookType.nitroError, error, config))
 })
