@@ -1,3 +1,4 @@
+import log from 'consola'
 import type { ModuleOptions as Config } from '../module'
 
 interface ErrorPayload {
@@ -14,17 +15,26 @@ interface ErrorPayload {
     version: string
   }
 }
-
-export const careVueError = (error: unknown, config: Config) => {
-  sendError('vue:error', error as unknown as ErrorPayload, config)
+export enum CareHookType {
+  vueError = 'vue:error',
+  appError = 'app:error',
+  nitroError = 'nitro:error',
 }
 
-export const careAppError = (error: unknown, config: Config) => {
-  sendError('app:error', error as unknown as ErrorPayload, config)
+const validApiKey = (config: Config) => !!config.apiKey && /^[a-z0-9]{32}$/.test(config.apiKey)
+
+export const careCheckConfig = (config: Config): boolean => {
+  if (!validApiKey(config)) {
+    log.info('[nuxt-care] Invalid or missing API key - not reporting.')
+  }
+  else {
+    log.success('[nuxt-care] Valid API key found - reporting errors.')
+  }
+  return validApiKey(config)
 }
 
-export const careNitroError = (error: unknown, config: Config) => {
-  sendError('nitro:error', error as unknown as ErrorPayload, config)
+export const careReport = (type: CareHookType, error: unknown, config: Config) => {
+  sendError(type, error as ErrorPayload, config)
 }
 
 const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
