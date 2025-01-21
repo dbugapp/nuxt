@@ -21,14 +21,17 @@ export enum CareHookType {
   nitroError = 'nitro:error',
 }
 
-const validApiKey = (config: Config) => !!config.apiKey && /^[a-z0-9]{32}$/.test(config.apiKey)
+const validApiKey = (config: Config): boolean => {
+  if (!config || !config.apiKey) return false
+  return /^[a-z0-9]{32}$/.test(config.apiKey)
+}
 
 export const careCheckConfig = (config: Config): boolean => {
   if (!validApiKey(config)) {
-    log.info('[nuxt-care] Invalid or missing API key - not reporting.')
+    log.info('[fume.care] Invalid or missing API key - reporting muted.')
   }
   else {
-    log.success('[nuxt-care] Valid API key found - reporting errors.')
+    log.success('[fume.care] Valid API key found - reporting errors.')
   }
   return validApiKey(config)
 }
