@@ -33,6 +33,10 @@ export const careReportConfig = (config: Config) => {
   else {
     log.success('[fume.care] Valid API key found - reporting activated')
   }
+
+  if (config.verbose) {
+    log.info('[fume.care] Verbose mode enabled - error details will be printed')
+  }
 }
 
 export const careCheckConfig = (config: Config): boolean => {
@@ -50,7 +54,7 @@ const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
     stack: error.stack,
     hook: hook,
     cause: error.cause,
-    client: import.meta.client,
+    client: typeof window !== 'undefined',
     timestamp: Math.floor(Date.now() / 1000),
     os: {
       platform: process.platform,
@@ -58,8 +62,12 @@ const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
       version: process.version,
     },
   }
+  const url = `${config.apiDomain}/api/entry`
   try {
-    const response = await fetch(`${config.apiDomain}/api/entry`, {
+    if (config.verbose) {
+      log.info(`[fume.care] Error in ${hook} going to ${url}`, payload)
+    }
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -73,6 +81,6 @@ const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
     return data
   }
   catch (err) {
-    log.error('[fume.care] Failed to send error:', err)
+    log.error(`[fume.care] Failed to send error to ${url}:`, err)
   }
 }

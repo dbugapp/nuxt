@@ -5,6 +5,7 @@ import { careReportConfig } from './runtime/care'
 export interface ModuleOptions {
   apiKey: string
   apiDomain?: string
+  verbose?: boolean
 }
 
 declare module 'nuxt/schema' {
@@ -13,6 +14,8 @@ declare module 'nuxt/schema' {
     apiKey: string
     // Optional custom care API domain
     apiDomain?: string
+    // Verbose logging
+    verbose?: boolean
   }
 }
 
@@ -24,14 +27,12 @@ export default defineNuxtModule<ModuleOptions>({
   // Default configuration options of the Nuxt module
   defaults: {
     apiDomain: 'https://fume.care',
+    verbose: false,
   },
-  setup(_options, nuxt) {
+  setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-
-    const config = useRuntimeConfig().public.care
-
+    const config = useRuntimeConfig().public.care || options
     nuxt.hook('modules:done', () => careReportConfig(config))
-
     addPlugin(resolver.resolve('./runtime/plugin'))
     addServerPlugin(resolver.resolve('./runtime/nitro'))
   },
