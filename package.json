@@ -2,7 +2,10 @@
   "name": "fume.care",
   "version": "0.0.12",
   "description": "Fume Care Nuxt module",
-  "repository": "fumeapp/care",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fumeapp/care.git"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {
