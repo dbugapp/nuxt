@@ -8,7 +8,6 @@ interface ErrorPayload {
   hook: string
   cause: string
   client?: boolean
-  timestamp: number
   os: {
     platform: string
     arch: string
@@ -19,6 +18,7 @@ export enum CareHookType {
   vueError = 'vue:error',
   appError = 'app:error',
   nitroError = 'nitro:error',
+  windowRejection = 'window:unhandledrejection',
 }
 
 const validApiKey = (config: Config): boolean => {
@@ -44,6 +44,7 @@ export const careCheckConfig = (config: Config): boolean => {
 }
 
 export const careReport = (type: CareHookType, error: unknown, config: Config) => {
+  console.log('calling careReport')
   sendError(type, error as ErrorPayload, config)
 }
 
@@ -55,14 +56,13 @@ const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
     hook: hook,
     cause: error.cause,
     client: typeof window !== 'undefined',
-    timestamp: Math.floor(Date.now() / 1000),
     os: {
       platform: process.platform,
       arch: process.arch,
       version: process.version,
     },
   }
-  const url = `${config.apiDomain}/api/entry`
+  const url = `${config.apiDomain}/api/issue`
   try {
     if (config.verbose) {
       log.info(`[fume.care] Error in ${hook} going to ${url}`, payload)
