@@ -10,7 +10,7 @@ export interface ModuleOptions {
 }
 
 declare module 'nuxt/schema' {
-  interface PubilcRuntimeConfig {
+  interface PublicRuntimeConfig {
     care: {
       /**
        * fume.care API Key

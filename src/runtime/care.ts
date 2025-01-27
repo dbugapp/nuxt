@@ -53,7 +53,6 @@ export enum CareHookType {
 
 const userFromFields = (user: Record<string, unknown>, fields: string[]) => {
   if (!user || !fields?.length) return undefined
-
   const filtered = Object.fromEntries(
     fields
       .filter(key => user[key] !== undefined)
@@ -65,7 +64,7 @@ const userFromFields = (user: Record<string, unknown>, fields: string[]) => {
 
 const getMeta = async (config: Config, event?: H3Event) => {
   const meta: ErrorMeta = { user: undefined, meta: undefined }
-  if (config.userFromAuthUtils && typeof useUserSession === 'function') {
+  if (config.userFromAuthUtils && !event && typeof useUserSession === 'function') {
     const { user } = useUserSession()
     meta.user = userFromFields(user.value, config.authUtilsUserFields)
   }
@@ -74,7 +73,7 @@ const getMeta = async (config: Config, event?: H3Event) => {
     const { user } = await getUserSession(event)
     meta.user = userFromFields(user, config.authUtilsUserFields)
   }
-  if (config.verbose) log.info('[fume.care] Meta:', meta)
+  if (config.verbose) log.info('[fume.care] meta:', JSON.stringify(meta))
   return meta
 }
 
@@ -124,6 +123,7 @@ export const careReport = async (type: CareHookType, err: unknown, unmerged: Con
     if (config.verbose) {
       log.info(`[fume.care] Error in ${type} going to ${url}`, payload)
     }
+    const meta = await getMeta(config, event)
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -131,7 +131,7 @@ export const careReport = async (type: CareHookType, err: unknown, unmerged: Con
         apiKey: config.apiKey,
         environment: 'production',
         payload: JSON.stringify(payload),
-        meta: JSON.stringify(await getMeta(config, event)),
+        meta: JSON.stringify(meta),
       }),
     })
     const data = await response.json()
