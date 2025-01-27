@@ -1,21 +1,48 @@
 import { defineNuxtModule, addPlugin, addServerPlugin, createResolver, useRuntimeConfig } from '@nuxt/kit'
-import { careReportConfig } from './runtime/care'
+import { careReportConfig, careConfigDefaults } from './runtime/care'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
+  /**
+   * fume.care API Key
+   */
   apiKey: string
-  apiDomain?: string
-  verbose?: boolean
+  /**
+   * Optional custom fume.care API domain
+   */
+  apiDomain: string
+  /**
+   * Verbose logging
+   */
+  verbose: boolean
+  /**
+   * Attempt to store the user from nuxt-auth-utils
+   * https://nuxt.com/modules/auth-utils
+   */
+  userFromAuthUtils: boolean
+  authUtilsUserFields: string[]
 }
 
 declare module 'nuxt/schema' {
   interface PubilcRuntimeConfig {
-    // API key for Care
+  /**
+   * fume.care API Key
+   */
     apiKey: string
-    // Optional custom care API domain
+    /**
+     * Optional custom fume.care API domain
+     */
     apiDomain?: string
-    // Verbose logging
+    /**
+     * Verbose logging
+     */
     verbose?: boolean
+    /**
+     * Attempt to store the user from nuxt-auth-utils
+     * https://nuxt.com/modules/auth-utils
+     */
+    userFromAuthUtils?: boolean
+    authUtilsUserFields?: string[]
   }
 }
 
@@ -25,10 +52,7 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'care',
   },
   // Default configuration options of the Nuxt module
-  defaults: {
-    apiDomain: 'https://fume.care',
-    verbose: false,
-  },
+  defaults: careConfigDefaults,
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
     const config = useRuntimeConfig().public.care || options

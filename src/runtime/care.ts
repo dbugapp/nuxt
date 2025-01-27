@@ -1,4 +1,6 @@
 import log from 'consola'
+import type { ComputedRef } from 'vue'
+import type { H3Event } from 'h3'
 import type { ModuleOptions as Config } from '../module'
 
 interface ErrorPayload {
@@ -14,6 +16,34 @@ interface ErrorPayload {
     version: string
   }
 }
+
+interface ErrorMeta {
+  user?: {
+    id?: string
+    email?: string
+    name?: string
+    avatar?: string
+  }
+  meta?: Record<string, unknown>
+}
+
+export const careConfigDefaults = {
+  apiDomain: 'https://fume.care',
+  verbose: false,
+  userFromAuthUtils: false,
+  authUtilsUserFields: ['id', 'email', 'name', 'avatar'],
+}
+
+const mergeConfig = (config: Config) => {
+  return {
+    ...careConfigDefaults,
+    ...config,
+  }
+}
+
+declare const useUserSession: () => { user: ComputedRef<Record<string, unknown>> }
+declare const getUserSession: (event: H3Event) => Promise<{ user: Record<string, unknown> }>
+
 export enum CareHookType {
   vueError = 'vue:error',
   appError = 'app:error',
@@ -21,14 +51,44 @@ export enum CareHookType {
   windowRejection = 'window:unhandledrejection',
 }
 
+const userFromFields = (user: Record<string, unknown>, fields: string[]) => {
+  if (!user || !fields?.length) return undefined
+
+  const filtered = Object.fromEntries(
+    fields
+      .filter(key => user[key] !== undefined)
+      .map(key => [key, user[key]]),
+  )
+
+  return Object.keys(filtered).length ? filtered : undefined
+}
+
+const getMeta = async (config: Config, event?: H3Event) => {
+  const meta: ErrorMeta = { user: undefined, meta: undefined }
+  if (config.userFromAuthUtils && typeof useUserSession === 'function') {
+    const { user } = useUserSession()
+    meta.user = userFromFields(user.value, config.authUtilsUserFields)
+  }
+
+  if (config.userFromAuthUtils && event && typeof getUserSession === 'function') {
+    const { user } = await getUserSession(event)
+    meta.user = userFromFields(user, config.authUtilsUserFields)
+  }
+  if (config.verbose) log.info('[fume.care] Meta:', meta)
+  return meta
+}
+
 const validApiKey = (config: Config): boolean => {
   if (!config || !config.apiKey) return false
-  return /^[a-z0-9]{32}$/.test(config.apiKey)
+  return /^[a-z0-9]{32}$/i.test(config.apiKey)
 }
 
 export const careReportConfig = (config: Config) => {
-  if (!validApiKey(config)) {
-    log.info('[fume.care] No valid API Key discovered - reporting muted')
+  if (!config.apiKey) {
+    log.info('[fume.care] no API key detected - reporting muted')
+  }
+  else if (!validApiKey(config)) {
+    log.warn('[fume.care] API key is invalid - reporting muted')
   }
   else {
     log.success('[fume.care] Valid API key found - reporting activated')
@@ -43,17 +103,14 @@ export const careCheckConfig = (config: Config): boolean => {
   return validApiKey(config)
 }
 
-export const careReport = (type: CareHookType, error: unknown, config: Config) => {
-  console.log('calling careReport')
-  sendError(type, error as ErrorPayload, config)
-}
-
-const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
+export const careReport = async (type: CareHookType, err: unknown, unmerged: Config, event?: H3Event) => {
+  const config = mergeConfig(unmerged)
+  const error = err as ErrorPayload
   const payload: ErrorPayload = {
     name: error.name,
     message: error.message,
     stack: error.stack,
-    hook: hook,
+    hook: type,
     cause: error.cause,
     client: typeof window !== 'undefined',
     os: {
@@ -65,7 +122,7 @@ const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
   const url = `${config.apiDomain}/api/issue`
   try {
     if (config.verbose) {
-      log.info(`[fume.care] Error in ${hook} going to ${url}`, payload)
+      log.info(`[fume.care] Error in ${type} going to ${url}`, payload)
     }
     const response = await fetch(url, {
       method: 'POST',
@@ -74,13 +131,14 @@ const sendError = async (hook: string, error: ErrorPayload, config: Config) => {
         apiKey: config.apiKey,
         environment: 'production',
         payload: JSON.stringify(payload),
+        meta: JSON.stringify(await getMeta(config, event)),
       }),
     })
     const data = await response.json()
-    log.success('[fume.care] Error sent successfully:', data.meta)
+    if (config.verbose) log.success('[fume.care] Error sent successfully:', data.meta)
     return data
   }
   catch (err) {
-    log.error(`[fume.care] Failed to send error to ${url}:`, err)
+    if (config.verbose) log.error(`[fume.care] Failed to send error to ${url}:`, err)
   }
 }
