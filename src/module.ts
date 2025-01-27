@@ -1,48 +1,50 @@
 import { defineNuxtModule, addPlugin, addServerPlugin, createResolver, useRuntimeConfig } from '@nuxt/kit'
 import { careReportConfig, careConfigDefaults } from './runtime/care'
 
-// Module options TypeScript interface definition
 export interface ModuleOptions {
-  /**
-   * fume.care API Key
-   */
   apiKey: string
-  /**
-   * Optional custom fume.care API domain
-   */
   apiDomain: string
-  /**
-   * Verbose logging
-   */
   verbose: boolean
-  /**
-   * Attempt to store the user from nuxt-auth-utils
-   * https://nuxt.com/modules/auth-utils
-   */
   userFromAuthUtils: boolean
   authUtilsUserFields: string[]
 }
 
 declare module 'nuxt/schema' {
   interface PubilcRuntimeConfig {
-  /**
-   * fume.care API Key
-   */
-    apiKey: string
-    /**
-     * Optional custom fume.care API domain
-     */
-    apiDomain?: string
-    /**
-     * Verbose logging
-     */
-    verbose?: boolean
-    /**
-     * Attempt to store the user from nuxt-auth-utils
-     * https://nuxt.com/modules/auth-utils
-     */
-    userFromAuthUtils?: boolean
-    authUtilsUserFields?: string[]
+    care: {
+      /**
+       * fume.care API Key
+       *
+       */
+      apiKey: string
+      /**
+       * Optional custom fume.care API domain
+       *
+       * @default https://fume.care
+       */
+
+      apiDomain?: string
+      /**
+       * Verbose logging
+       *
+       * @default false
+       */
+      verbose?: boolean
+      /**
+       * Attempt to store the user from nuxt-auth-utils
+       * @see https://nuxt.com/modules/auth-utils
+       *
+       * @default false
+       */
+
+      userFromAuthUtils?: boolean
+      /**
+       * Customize the fields that are plucked from the user supplied from nuxt-auth-utils
+       *
+       * @default ['id', 'email', 'name', 'avatar']
+       */
+      authUtilsUserFields?: string[]
+    }
   }
 }
 
@@ -51,7 +53,6 @@ export default defineNuxtModule<ModuleOptions>({
     name: 'fume.care',
     configKey: 'care',
   },
-  // Default configuration options of the Nuxt module
   defaults: careConfigDefaults,
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
