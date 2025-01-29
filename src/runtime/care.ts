@@ -64,16 +64,19 @@ const userFromFields = (user: Record<string, unknown>, fields: string[]) => {
 
 const getMeta = async (config: Config, event?: H3Event) => {
   const meta: ErrorMeta = { user: undefined, meta: undefined }
+
+  // if we are incorporating nuxt-auth-utils in app/
   if (config.userFromAuthUtils && !event && typeof useUserSession === 'function') {
     const { user } = useUserSession()
     meta.user = userFromFields(user.value, config.authUtilsUserFields)
   }
 
+  // if we are incorporating nuxt-auth-utils in server/
   if (config.userFromAuthUtils && event && typeof getUserSession === 'function') {
     const { user } = await getUserSession(event)
     meta.user = userFromFields(user, config.authUtilsUserFields)
   }
-  if (config.verbose) log.info('[fume.care] meta:', JSON.stringify(meta))
+  if (config.verbose) log.info('[fume.care] stored meta being sent:', JSON.stringify(meta))
   return meta
 }
 
@@ -139,6 +142,6 @@ export const careReport = async (type: CareHookType, err: unknown, unmerged: Con
     return data
   }
   catch (err) {
-    if (config.verbose) log.error(`[fume.care] Failed to send error to ${url}:`, err)
+    if (config.verbose) log.error(`[fume.care] Failed to send error:`, err)
   }
 }
