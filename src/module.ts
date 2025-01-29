@@ -5,8 +5,8 @@ export interface ModuleOptions {
   apiKey: string
   apiDomain: string
   verbose: boolean
-  userFromAuthUtils: boolean
-  authUtilsUserFields: string[]
+  authUtils: boolean
+  authUtilsFields: string[]
 }
 
 declare module 'nuxt/schema' {
@@ -37,13 +37,13 @@ declare module 'nuxt/schema' {
        * @default false
        */
 
-      userFromAuthUtils?: boolean
+      authUtils?: boolean
       /**
        * Customize the fields that are plucked from the user supplied from nuxt-auth-utils
        *
        * @default ['id', 'email', 'name', 'avatar']
        */
-      authUtilsUserFields?: string[]
+      authUtilsFields?: string[]
     }
   }
 }

@@ -30,8 +30,8 @@ interface ErrorMeta {
 export const careConfigDefaults = {
   apiDomain: 'https://fume.care',
   verbose: false,
-  userFromAuthUtils: false,
-  authUtilsUserFields: ['id', 'email', 'name', 'avatar'],
+  authUtils: false,
+  authUtilsFields: ['id', 'email', 'name', 'avatar'],
 }
 
 const mergeConfig = (config: Config) => {
@@ -66,15 +66,15 @@ const getMeta = async (config: Config, event?: H3Event) => {
   const meta: ErrorMeta = { user: undefined, meta: undefined }
 
   // if we are incorporating nuxt-auth-utils in app/
-  if (config.userFromAuthUtils && !event && typeof useUserSession === 'function') {
+  if (config.authUtils && !event && typeof useUserSession === 'function') {
     const { user } = useUserSession()
-    meta.user = userFromFields(user.value, config.authUtilsUserFields)
+    meta.user = userFromFields(user.value, config.authUtilsFields)
   }
 
   // if we are incorporating nuxt-auth-utils in server/
-  if (config.userFromAuthUtils && event && typeof getUserSession === 'function') {
+  if (config.authUtils && event && typeof getUserSession === 'function') {
     const { user } = await getUserSession(event)
-    meta.user = userFromFields(user, config.authUtilsUserFields)
+    meta.user = userFromFields(user, config.authUtilsFields)
   }
   if (config.verbose) log.info('[fume.care] stored meta being sent:', JSON.stringify(meta))
   return meta
