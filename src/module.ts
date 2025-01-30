@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, addServerPlugin, createResolver, useRuntimeConfig, installModule } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, addServerPlugin, createResolver, useRuntimeConfig } from '@nuxt/kit'
 import { careReportConfig, careConfigDefaults } from './runtime/care'
 
 export interface ModuleOptions {
