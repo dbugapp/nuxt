@@ -3,15 +3,20 @@ import type { H3Event } from 'h3'
 import type { ModuleOptions as Config } from '../module'
 
 interface ErrorPayload {
+  hook: string
   name: string
   message: string
   stack: string
-  hook: string
   cause: string
-  client?: boolean
+  client: boolean
+  environment: string
   os: {
     platform: string
     arch: string
+    version: string
+  }
+  process: {
+    pid: number
     version: string
   }
 }
@@ -27,8 +32,9 @@ interface ErrorMeta {
 }
 
 export const careConfigDefaults = {
+  env: 'development',
   apiDomain: 'https://fume.care',
-  verbose: false,
+  log: false,
   authUtils: false,
   authUtilsFields: ['id', 'email', 'name', 'avatar'],
 }
@@ -46,6 +52,16 @@ export enum CareHookType {
   windowRejection = 'window:unhandledrejection',
 }
 
+const getMeta = (config: Config, user?: Record<string, string>) => {
+  const meta: ErrorMeta = { user: undefined, meta: undefined }
+  console.log('getMeta user', user)
+  if (config.authUtils && user) {
+    meta.user = userFromFields(user, config.authUtilsFields)
+  }
+  if (config.log) log.info('[fume.care] stored meta being sent:', JSON.stringify(meta))
+  return meta
+}
+
 const userFromFields = (user: Record<string, unknown>, fields: string[]) => {
   if (!user || !fields?.length) return undefined
   const filtered = Object.fromEntries(
@@ -57,24 +73,11 @@ const userFromFields = (user: Record<string, unknown>, fields: string[]) => {
   return Object.keys(filtered).length ? filtered : undefined
 }
 
-const getMeta = async (config: Config, event?: H3Event) => {
-  const meta: ErrorMeta = { user: undefined, meta: undefined }
-
-  // if we are incorporating nuxt-auth-utils in app/
-  if (config.authUtils && !event) {
-    // @ts-expect-error auto-imported
-    const { user } = useUserSession()
-    meta.user = userFromFields(user.value, config.authUtilsFields)
-  }
-
-  // if we are incorporating nuxt-auth-utils in server/
-  if (config.authUtils && event) {
-    // @ts-expect-error auto-imported
-    const { user } = await getUserSession(event)
-    meta.user = userFromFields(user, config.authUtilsFields)
-  }
-  if (config.verbose) log.info('[fume.care] stored meta being sent:', JSON.stringify(meta))
-  return meta
+const getEnv = (config: Config) => {
+  if (config.env) return config.env
+  if (process.env.NUXT_HUB_ENV) return process.env.NUXT_HUB_ENV
+  if (process.env.NUXT_APP_ENV) return process.env.NUXT_APP_ENV
+  return 'development'
 }
 
 const validApiKey = (config: Config): boolean => {
@@ -82,27 +85,30 @@ const validApiKey = (config: Config): boolean => {
   return /^[a-z0-9]{32}$/i.test(config.apiKey)
 }
 
+export const careCheckConfig = (config: Config): boolean => {
+  return validApiKey(config) && getEnv(config) !== 'development'
+}
+
 export const careReportConfig = (config: Config) => {
   if (!config.apiKey) {
-    log.info('[fume.care] no API key detected - reporting muted')
+    log.info('[fume.care] no API key detected - reporting disabled')
   }
   else if (!validApiKey(config)) {
-    log.warn('[fume.care] API key is invalid - reporting muted')
+    log.warn('[fume.care] API key is invalid - reporting disabled')
+  }
+  else if (getEnv(config) === 'development') {
+    log.info('[fume.care] development or undetected environment - reporting disabled')
   }
   else {
-    log.success('[fume.care] Valid API key found - reporting activated')
+    log.success(`[fume.care] Valid API key found - reporting enabled for \`${getEnv(config)}\` environment`)
   }
 
-  if (config.verbose) {
-    log.info('[fume.care] Verbose mode enabled - error details will be printed')
+  if (careCheckConfig(config) && config.log) {
+    log.info('[fume.care] logging enabled - error details will be printed')
   }
 }
 
-export const careCheckConfig = (config: Config): boolean => {
-  return validApiKey(config)
-}
-
-export const careReport = async (type: CareHookType, err: unknown, unmerged: Config, event?: H3Event) => {
+export const careReport = async (type: CareHookType, err: unknown, unmerged: Config, event?: H3Event, user?: Record<string, string>) => {
   const config = mergeConfig(unmerged)
   const error = err as ErrorPayload
   const payload: ErrorPayload = {
@@ -112,33 +118,37 @@ export const careReport = async (type: CareHookType, err: unknown, unmerged: Con
     hook: type,
     cause: error.cause,
     client: typeof window !== 'undefined',
+    environment: getEnv(config),
     os: {
       platform: process.platform,
       arch: process.arch,
       version: process.version,
     },
+    process: {
+      pid: process.pid,
+      version: process.version,
+    },
   }
   const url = `${config.apiDomain}/api/issue`
+  const meta = getMeta(config, user)
   try {
-    if (config.verbose) {
+    if (config.log) {
       log.info(`[fume.care] Error in ${type} going to ${url}`, payload)
     }
-    const meta = await getMeta(config, event)
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         apiKey: config.apiKey,
-        environment: 'production',
         payload: JSON.stringify(payload),
         meta: JSON.stringify(meta),
       }),
     })
     const data = await response.json()
-    if (config.verbose) log.success('[fume.care] Error sent successfully:', data.meta)
+    if (config.log) log.success('[fume.care] Error sent successfully:', data.meta)
     return data
   }
   catch (err) {
-    if (config.verbose) log.error(`[fume.care] Failed to send error:`, err)
+    if (config.log) log.error(`[fume.care] Failed to send error:`, err)
   }
 }
