@@ -1,5 +1,4 @@
 import log from 'consola'
-import type { ComputedRef } from 'vue'
 import type { H3Event } from 'h3'
 import type { ModuleOptions as Config } from '../module'
 
