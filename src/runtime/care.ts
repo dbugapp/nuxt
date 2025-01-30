@@ -40,10 +40,6 @@ const mergeConfig = (config: Config) => {
     ...config,
   }
 }
-
-declare const useUserSession: () => { user: ComputedRef<Record<string, unknown>> }
-declare const getUserSession: (event: H3Event) => Promise<{ user: Record<string, unknown> }>
-
 export enum CareHookType {
   vueError = 'vue:error',
   appError = 'app:error',
@@ -66,13 +62,15 @@ const getMeta = async (config: Config, event?: H3Event) => {
   const meta: ErrorMeta = { user: undefined, meta: undefined }
 
   // if we are incorporating nuxt-auth-utils in app/
-  if (config.authUtils && !event && typeof useUserSession === 'function') {
+  if (config.authUtils && !event) {
+    // @ts-expect-error auto-imported
     const { user } = useUserSession()
     meta.user = userFromFields(user.value, config.authUtilsFields)
   }
 
   // if we are incorporating nuxt-auth-utils in server/
-  if (config.authUtils && event && typeof getUserSession === 'function') {
+  if (config.authUtils && event) {
+    // @ts-expect-error auto-imported
     const { user } = await getUserSession(event)
     meta.user = userFromFields(user, config.authUtilsFields)
   }
