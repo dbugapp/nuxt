@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, addServerPlugin, createResolver, useRuntimeConfig } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, addServerPlugin, createResolver, useRuntimeConfig, installModule } from '@nuxt/kit'
 import { careReportConfig, careConfigDefaults } from './runtime/care'
 
 export interface ModuleOptions {
@@ -54,9 +54,12 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'care',
   },
   defaults: careConfigDefaults,
-  setup(options, nuxt) {
+  async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
     const config = useRuntimeConfig().public.care || options
+
+    if (config.authUtils) await installModule('nuxt-auth-utils')
+
     nuxt.hook('modules:done', () => careReportConfig(config))
     addPlugin(resolver.resolve('./runtime/plugin'))
     addServerPlugin(resolver.resolve('./runtime/nitro'))
