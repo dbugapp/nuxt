@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.21
+
+[compare changes](https://github.com/fumeapp/care/compare/v0.0.20...v0.0.21)
+
+### 🏡 Chore
+
+- **release:** V0.0.20 ([9e90476](https://github.com/fumeapp/care/commit/9e90476))
+
+### ❤️ Contributors
+
+- Kevin Olson ([@acidjazz](http://github.com/acidjazz))
+
 ## v0.0.20
 
 [compare changes](https://github.com/fumeapp/care/compare/v0.0.17...v0.0.20)
