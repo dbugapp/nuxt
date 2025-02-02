@@ -1,6 +1,11 @@
 import log from 'consola'
 import type { ModuleOptions as Config } from '../module'
 
+const signature = '[`fume`.`care`]'
+const info = (msg: string) => log.info(`${signature} ${msg}`)
+const warn = (msg: string) => log.warn(`${signature} ${msg}`)
+const success = (msg: string) => log.success(`${signature} ${msg}`)
+
 export const configDefaults = {
   env: 'development',
   domain: 'https://fume.care',
@@ -10,23 +15,26 @@ export const validKey = (config: Config): boolean =>
   config && typeof config.key === 'string' && /^[a-z0-9]{32}$/i.test(config.key)
 
 export const checkConfig = (config: Config): boolean =>
-  validKey(config) && config.env !== 'development'
+  validKey(config) && config.env !== 'development' && config.env !== ''
 
 export const reportConfig = (config: Config) => {
   if (!config.key) {
-    log.info('[fume.care] no key detected - reporting disabled')
+    info('no key detected - reporting disabled')
   }
   else if (!validKey(config)) {
-    log.warn('[fume.care] key is invalid - reporting disabled')
+    warn('key is invalid - reporting disabled')
   }
   else if (config.env === 'development') {
-    log.info('[fume.care] development or undetected environment - reporting disabled')
+    info('development environment detected - reporting disabled')
+  }
+  else if (config.env === '') {
+    info('undetected environment - reporting disabled')
   }
   else {
-    log.success(`[fume.care] Valid API key found - reporting enabled for \`${config.env}\` environment`)
+    success(`valid API key found - reporting enabled for \`${config.env}\` environment`)
   }
 
   if (checkConfig(config) && config.log) {
-    log.info('[fume.care] logging enabled - error details will be printed')
+    info('logging enabled - error details will be printed')
   }
 }
