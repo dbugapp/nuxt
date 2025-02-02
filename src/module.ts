@@ -1,15 +1,14 @@
-import { defineNuxtModule, addPlugin, addServerPlugin, createResolver, useRuntimeConfig } from '@nuxt/kit'
-import { careReportConfig, careConfigDefaults } from './runtime/care'
+import { defineNuxtModule, addPlugin, addServerPlugin, addImports, createResolver, useRuntimeConfig } from '@nuxt/kit'
+import { reportConfig, configDefaults } from './runtime/care'
 
 export interface ModuleOptions {
-  apiKey: string
+  key: string
   env: string
-  apiDomain: string
+  domain: string
   log: boolean
   authUtils: boolean
   authUtilsFields: string[]
 }
-
 declare module 'nuxt/schema' {
   interface PublicRuntimeConfig {
     care: {
@@ -17,7 +16,7 @@ declare module 'nuxt/schema' {
        * fume.care API Key
        *
        */
-      apiKey: string
+      key: string
       /**
        * fume.care environment
        *  @default development
@@ -29,7 +28,7 @@ declare module 'nuxt/schema' {
        * @default https://fume.care
        */
 
-      apiDomain?: string
+      domain?: string
       /**
        * Verbose logging
        *
@@ -42,29 +41,25 @@ declare module 'nuxt/schema' {
        *
        * @default false
        */
-
-      authUtils?: boolean
-      /**
-       * Customize the fields that are plucked from the user supplied from nuxt-auth-utils
-       *
-       * @default ['id', 'email', 'name', 'avatar']
-       */
-      authUtilsFields?: string[]
     }
   }
 }
-
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'fume.care',
     configKey: 'care',
   },
-  defaults: careConfigDefaults,
+  defaults: configDefaults,
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
     const config = useRuntimeConfig().public.care || options
-    nuxt.hook('modules:done', () => careReportConfig(config))
-    addPlugin(resolver.resolve('./runtime/plugin'))
-    addServerPlugin(resolver.resolve('./runtime/nitro'))
+    nuxt.options.alias['#api-utils'] = resolver.resolve('./runtime/types/index')
+    nuxt.hook('modules:done', () => reportConfig(config))
+    addPlugin(resolver.resolve('./runtime/app/plugins/care'))
+    addImports({
+      name: 'useCare',
+      from: resolver.resolve('./runtime/app/composables/care'),
+    })
+    addServerPlugin(resolver.resolve('./runtime/server/plugins/care'))
   },
 })
