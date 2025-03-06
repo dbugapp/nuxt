@@ -1,5 +1,5 @@
 {
-  "name": "@dbug/nuxt",
+  "name": "@dbugapp/nuxt",
   "version": "0.0.28",
   "description": "dbug Nuxt module",
   "repository": {
@@ -8,6 +8,9 @@
   },
   "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "@dbugapp:registry": "https://npm.pkg.github.com"
+  },
   "exports": {
     ".": {
       "types": "./dist/types.d.ts",
