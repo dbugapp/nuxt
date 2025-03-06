@@ -1,14 +1,14 @@
 import log from 'consola'
 import type { ModuleOptions as Config } from '../module'
 
-const signature = '[`fume`.`care`]'
+const signature = '[`dbug`]'
 const info = (msg: string) => log.info(`${signature} ${msg}`)
 const warn = (msg: string) => log.warn(`${signature} ${msg}`)
 const success = (msg: string) => log.success(`${signature} ${msg}`)
 
 export const configDefaults = {
   env: 'development',
-  domain: 'https://fume.care',
+  domain: 'https://dbug.app',
   log: false,
 }
 export const validKey = (config: Config): boolean =>

@@ -38,16 +38,16 @@ export interface ErrorMeta {
   tags?: Record<string, string | number | boolean>
 }
 
-export interface CareComposable {
+export interface DbugComposable {
   meta: Ref<ErrorMeta>
   /**
    * Set the current user session
-   * @param user  User Object - care will look for nd pluck id, email, name, and avatar
+   * @param user  User Object - dbug will look for and pluck id, email, name, and avatar
    */
   setUser: (user: Record<string, string>) => void
   /**
    * Set custom meta data that will be tied to your projects issues
-   * ex: useCare().tag('page', 'home')
+   * ex: useDbug().tag('page', 'home')
    * @param key key
    * @param value value
    */

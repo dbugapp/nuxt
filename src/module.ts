@@ -1,5 +1,5 @@
 import { defineNuxtModule, addPlugin, addServerPlugin, addImports, createResolver, useRuntimeConfig } from '@nuxt/kit'
-import { reportConfig, configDefaults } from './runtime/care'
+import { reportConfig, configDefaults } from './runtime/dbug'
 
 export interface ModuleOptions {
   key: string
@@ -11,21 +11,21 @@ export interface ModuleOptions {
 }
 declare module 'nuxt/schema' {
   interface PublicRuntimeConfig {
-    care: {
+    dbug: {
       /**
-       * fume.care API Key
+       * dbug API Key
        *
        */
       key: string
       /**
-       * fume.care environment
+       * dbug environment
        *  @default development
        */
       env?: string
       /**
-       * Optional custom fume.care API domain
+       * Optional custom dbug API domain
        *
-       * @default https://fume.care
+       * @default https://dbug.app
        */
 
       domain?: string
@@ -46,20 +46,20 @@ declare module 'nuxt/schema' {
 }
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'fume.care',
-    configKey: 'care',
+    name: 'dbug',
+    configKey: 'dbug',
   },
   defaults: configDefaults,
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    const config = useRuntimeConfig().public.care || options
+    const config = useRuntimeConfig().public.dbug || options
     nuxt.options.alias['#api-utils'] = resolver.resolve('./runtime/types/index')
     nuxt.hook('modules:done', () => reportConfig(config))
-    addPlugin(resolver.resolve('./runtime/app/plugins/care'))
+    addPlugin(resolver.resolve('./runtime/app/plugins/dbug'))
     addImports({
-      name: 'useCare',
-      from: resolver.resolve('./runtime/app/composables/care'),
+      name: 'useDbug',
+      from: resolver.resolve('./runtime/app/composables/dbug'),
     })
-    addServerPlugin(resolver.resolve('./runtime/server/plugins/care'))
+    addServerPlugin(resolver.resolve('./runtime/server/plugins/dbug'))
   },
 })

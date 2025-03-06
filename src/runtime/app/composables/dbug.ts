@@ -1,16 +1,16 @@
 import log from 'consola'
 import type { H3Event } from 'h3'
 import type { ModuleOptions as Config } from '../../../module'
-import { configDefaults, checkConfig } from '../../care'
-import type { CareComposable, ErrorMeta, ErrorPayload, HookType } from '#api-utils'
+import { configDefaults, checkConfig } from '../../dbug'
+import type { DbugComposable, ErrorMeta, ErrorPayload, HookType } from '#api-utils'
 import { useState, computed, useRequestHeader } from '#imports'
 
 /**
- * Composable to interact with care.
- * @see https://github.com/fumeapp/care
+ * Composable to interact with dbug.
+ * @see https://github.com/fumeapp/dbug-module
  */
-export function useCare(): CareComposable {
-  const meta = useState<ErrorMeta>('care-meta', () =>
+export function useDbug(): DbugComposable {
+  const meta = useState<ErrorMeta>('dbug-meta', () =>
     ({ user: undefined, agent: undefined, tags: {} }))
 
   const setUser = (user: Record<string, string>) =>
@@ -69,12 +69,12 @@ export function useCare(): CareComposable {
       console.log('event is present', event.headers)
     }
 
-    if (config.log) log.info('[fume.care] stored meta being sent:', JSON.stringify(useCare().meta.value))
+    if (config.log) log.info('[dbug] stored meta being sent:', JSON.stringify(useDbug().meta.value))
 
     const url = `${config.domain}/api/issue`
     try {
       if (config.log) {
-        log.info(`[fume.care] Error in ${type} going to ${url}`, payload)
+        log.info(`[dbug] Error in ${type} going to ${url}`, payload)
       }
       const response = await fetch(url, {
         method: 'POST',
@@ -82,15 +82,15 @@ export function useCare(): CareComposable {
         body: JSON.stringify({
           key: config.key,
           payload: JSON.stringify(payload),
-          meta: JSON.stringify(useCare().meta.value),
+          meta: JSON.stringify(useDbug().meta.value),
         }),
       })
       const data = await response.json()
-      if (config.log) log.success('[fume.care] Error sent successfully:', data.meta)
+      if (config.log) log.success('[dbug] Error sent successfully:', data.meta)
       return data
     }
     catch (err) {
-      if (config.log) log.error(`[fume.care] Failed to send error:`, err)
+      if (config.log) log.error(`[dbug] Failed to send error:`, err)
     }
   }
 

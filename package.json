@@ -1,10 +1,10 @@
 {
-  "name": "fume.care",
+  "name": "@dbug/nuxt",
   "version": "0.0.21",
-  "description": "Fume Care Nuxt module",
+  "description": "dbug Nuxt module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fumeapp/care.git"
+    "url": "git+https://github.com/fumeapp/dbug-module.git"
   },
   "license": "MIT",
   "type": "module",

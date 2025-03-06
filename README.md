@@ -1,4 +1,4 @@
-# Fume Care Nuxt module
+# dbug Nuxt module
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
@@ -8,8 +8,8 @@
 My new Nuxt module for doing amazing things.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
-[🏀 Online playground](https://stackblitz.com/github/fumeapp/care?file=playground%2Fapp.vue) 
-[📖 &nbsp;Documentation](https://fume.care/docs) 
+[🏀 Online playground](https://stackblitz.com/github/fumeapp/dbug-module?file=playground%2Fapp.vue) 
+[📖 &nbsp;Documentation](https://dbug.app/docs) 
 
 ## Features
 
@@ -23,10 +23,10 @@ My new Nuxt module for doing amazing things.
 Install the module to your Nuxt application with one command:
 
 ```bash
-npx nuxi module add fume.care
+npx nuxi module add @dbug/nuxt
 ```
 
-That's it! You can now use Fume Care Nuxt module in your Nuxt app ✨
+That's it! You can now use the dbug module in your Nuxt app ✨
 
 
 ## Contribution
@@ -62,14 +62,14 @@ That's it! You can now use Fume Care Nuxt module in your Nuxt app ✨
 
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/fume.care/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/fume.care
+[npm-version-src]: https://img.shields.io/npm/v/@dbug/nuxt/latest.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-version-href]: https://npmjs.com/package/@dbug/nuxt
 
-[npm-downloads-src]: https://img.shields.io/npm/dm/fume.care.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-downloads-href]: https://npm.chart.dev/fume.care
+[npm-downloads-src]: https://img.shields.io/npm/dm/dbug.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-downloads-href]: https://npm.chart.dev/@dbug/nuxt
 
-[license-src]: https://img.shields.io/npm/l/fume.care.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/fume.care
+[license-src]: https://img.shields.io/npm/l/dbug.svg?style=flat&colorA=020420&colorB=00DC82
+[license-href]: https://npmjs.com/package/@dbug/nuxt
 
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js
 [nuxt-href]: https://nuxt.com
