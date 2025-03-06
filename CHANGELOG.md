@@ -1,6 +1,10 @@
 # Changelog
 
 
+## v0.0.23
+
+[compare changes](https://github.com/dbugapp/nuxt/compare/v0.0.22...v0.0.23)
+
 ## v0.0.22
 
 [compare changes](https://github.com/fumeapp/dbug-module/compare/v0.0.20...v0.0.22)
