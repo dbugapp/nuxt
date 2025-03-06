@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.22
+
+[compare changes](https://github.com/fumeapp/dbug-module/compare/v0.0.20...v0.0.22)
+
+### 🏡 Chore
+
+- **release:** V0.0.21 ([bf1e47b](https://github.com/fumeapp/dbug-module/commit/bf1e47b))
+
+### ❤️ Contributors
+
+- Kevin Olson ([@acidjazz](http://github.com/acidjazz))
+
 ## v0.0.21
 
 [compare changes](https://github.com/fumeapp/dbug-module/compare/v0.0.20...v0.0.21)
