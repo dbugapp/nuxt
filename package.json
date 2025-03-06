@@ -4,7 +4,7 @@
   "description": "dbug Nuxt module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fumeapp/dbug-module.git"
+    "url": "git+https://github.com/dbugapp/nuxt.git"
   },
   "license": "MIT",
   "type": "module",
