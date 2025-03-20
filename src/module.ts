@@ -19,7 +19,7 @@ export interface ModuleOptions {
   /**
    * Optional custom dbug API domain
    *
-   * @default https://dbug.app
+   * @default https://dbug.nuxt.dev
    */
   domain: string
   /**
@@ -47,7 +47,7 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     key: '',
     env: 'development',
-    domain: 'https://dbug.app',
+    domain: 'https://dbug.nuxt.dev',
     log: false,
   },
   async setup(options, nuxt) {
