@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.29
+
+[compare changes](https://github.com/dbugapp/nuxt/compare/v0.0.28...v0.0.29)
+
+### 🏡 Chore
+
+- **release:** V0.0.28 ([29d207c](https://github.com/dbugapp/nuxt/commit/29d207c))
+
+### ❤️ Contributors
+
+- Kevin Olson ([@acidjazz](https://github.com/acidjazz))
+
 ## v0.0.28
 
 [compare changes](https://github.com/dbugapp/nuxt/compare/v0.0.27...v0.0.28)
