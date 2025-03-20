@@ -5,12 +5,6 @@ const signature = '[`dbug`]'
 const info = (msg: string) => consola.info(`${signature} ${msg}`)
 const warn = (msg: string) => consola.warn(`${signature} ${msg}`)
 const success = (msg: string) => consola.success(`${signature} ${msg}`)
-export const configDefaults = {
-  key: '',
-  env: 'development',
-  domain: 'https://dbug.nuxt.dev',
-  log: false,
-}
 export const validKey = (config: Config): boolean =>
   config && typeof config.key === 'string' && /^[a-z0-9]{32}$/i.test(config.key)
 

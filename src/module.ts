@@ -54,8 +54,8 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
     nuxt.options.runtimeConfig.public.dbug = defu({
       key: process.env.NUXT_DBUG_KEY || '',
-      env: process.env.NUXT_DBUG_ENV || '',
-      domain: process.env.NUXT_DBUG_DOMAIN || '',
+      env: process.env.NUXT_DBUG_ENV,
+      domain: process.env.NUXT_DBUG_DOMAIN,
       log: process.env.NUXT_DBUG_LOG === 'true' ? true : false,
     }, options)
     nuxt.options.alias['#dbug'] = resolver.resolve('./runtime/types/index')
