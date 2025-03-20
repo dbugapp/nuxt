@@ -8,7 +8,7 @@ const success = (msg: string) => consola.success(`${signature} ${msg}`)
 export const configDefaults = {
   key: '',
   env: 'development',
-  domain: 'https://dbug.app',
+  domain: 'https://dbug.nuxt.dev',
   log: false,
 }
 export const validKey = (config: Config): boolean =>
