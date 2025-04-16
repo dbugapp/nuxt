@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3'
 import type { ModuleOptions } from '../../../module'
-import { report } from '../../dbug'
+import { report, getAgent } from '../../dbug'
 
 export async function dbugReport(event: H3Event | undefined, _error: unknown) {
   const config = {
@@ -12,10 +12,10 @@ export async function dbugReport(event: H3Event | undefined, _error: unknown) {
 
   const meta = {
     user: undefined,
-    agent: undefined,
+    agent: getAgent(event),
     tags: {},
   }
 
-  report('nitro:error', _error, config, meta, event)
+  report('nitro:error', _error, config, meta)
   if (!event) return
 }

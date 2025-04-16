@@ -22,7 +22,17 @@ export const reportConfig = (config: Config) => {
   if (checkConfig(config) && config.log) info('logging enabled - error details will be printed')
 }
 
-export const report = async (type: HookType, err: unknown, config: Config, meta: ErrorMeta, event?: H3Event) => {
+export const getAgent = (event?: H3Event): string | undefined => {
+  try {
+    return event?.headers.get('user-agent') as string
+      || window?.navigator?.userAgent
+  }
+  catch {
+    return undefined
+  }
+}
+
+export const report = async (type: HookType, err: unknown, config: Config, meta: ErrorMeta) => {
   if (!checkConfig(config)) return
 
   const error = err as ErrorPayload
@@ -48,11 +58,6 @@ export const report = async (type: HookType, err: unknown, config: Config, meta:
         }
       : undefined,
   }
-
-  if (event) {
-    console.log('event is present', event.headers)
-  }
-
   if (config.log) consola.info('[dbug] stored meta being sent:', JSON.stringify(meta))
 
   const url = `${config.domain}/api/issue`
