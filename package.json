@@ -1,6 +1,6 @@
 {
   "name": "@dbugapp/nuxt",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "dbug Nuxt module",
   "repository": {
     "type": "git",
