@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.36
+
+[compare changes](https://github.com/dbugapp/nuxt/compare/v0.0.35...v0.0.36)
+
+### 🏡 Chore
+
+- **release:** V0.0.35 ([514d884](https://github.com/dbugapp/nuxt/commit/514d884))
+
+### ❤️ Contributors
+
+- Kevin Olson ([@acidjazz](https://github.com/acidjazz))
+
 ## v0.0.35
 
 [compare changes](https://github.com/dbugapp/nuxt/compare/v0.0.34...v0.0.35)
