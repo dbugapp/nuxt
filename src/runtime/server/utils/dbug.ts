@@ -1,11 +1,21 @@
 import type { H3Event } from 'h3'
-import { useSession, isEvent } from 'h3'
 import type { ModuleOptions } from '../../../module'
-import { useRuntimeConfig } from '#imports'
+import { report } from '../../dbug'
 
 export async function dbugReport(event: H3Event | undefined, _error: unknown) {
-  const config = useRuntimeConfig(isEvent(event) ? event : undefined).public.dbug as Required<ModuleOptions>
+  const config = {
+    key: process.env.NUXT_DBUG_KEY || '',
+    env: process.env.NUXT_DBUG_ENV,
+    domain: process.env.NUXT_DBUG_DOMAIN || 'https://dbug.nuxt.dev',
+    log: process.env.NUXT_DBUG_LOG === 'true' ? true : false,
+  } as Required<ModuleOptions>
+
+  const meta = {
+    user: undefined,
+    agent: undefined,
+    tags: {},
+  }
+
+  report('nitro:error', _error, config, meta, event)
   if (!event) return
-  const session = await useSession(event, { password: config.key })
-  console.log('in nitro config', session)
 }

@@ -1,8 +1,7 @@
-import { consola } from 'consola'
 import type { H3Event } from 'h3'
 import type { ModuleOptions as Config } from '../../../module'
-import { checkConfig } from '../../dbug'
-import type { DbugComposable, ErrorMeta, ErrorPayload, HookType } from '#dbug'
+import { checkConfig, report as dbReport } from '../../dbug'
+import type { DbugComposable, ErrorMeta, HookType } from '#dbug'
 import { useState, computed, useRequestHeader } from '#imports'
 
 /**
@@ -36,58 +35,7 @@ export function useDbug(): DbugComposable {
     if (!checkConfig(config)) return
 
     setAgent(getAgent(event))
-
-    const error = err as ErrorPayload
-    const payload: ErrorPayload = {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-      hook: type,
-      cause: error.cause,
-      client: typeof window !== 'undefined',
-      environment: config.env,
-      os: typeof process !== 'undefined'
-        ? {
-            platform: process.platform,
-            arch: process.arch,
-            version: process.version,
-          }
-        : undefined,
-      process: typeof process !== 'undefined'
-        ? {
-            pid: process.pid,
-            version: process.version,
-          }
-        : undefined,
-    }
-
-    if (event) {
-      console.log('event is present', event.headers)
-    }
-
-    if (config.log) consola.info('[dbug] stored meta being sent:', JSON.stringify(useDbug().meta.value))
-
-    const url = `${config.domain}/api/issue`
-    try {
-      if (config.log) {
-        consola.info(`[dbug] Error in ${type} going to ${url}`, payload)
-      }
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          key: config.key,
-          payload: JSON.stringify(payload),
-          meta: JSON.stringify(useDbug().meta.value),
-        }),
-      })
-      const data = await response.json()
-      if (config.log) consola.success('[dbug] Error sent successfully:', data.meta)
-      return data
-    }
-    catch (err) {
-      if (config.log) consola.error(`[dbug] Failed to send error:`, err)
-    }
+    dbReport(type, err, config, meta.value, event)
   }
 
   return {

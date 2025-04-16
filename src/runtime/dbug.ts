@@ -1,5 +1,7 @@
 import { consola } from 'consola'
+import type { H3Event } from 'h3'
 import type { ModuleOptions as Config } from '../module'
+import type { ErrorMeta, ErrorPayload, HookType } from '#dbug'
 
 const signature = '[`dbug`]'
 const info = (msg: string) => consola.info(`${signature} ${msg}`)
@@ -18,4 +20,60 @@ export const reportConfig = (config: Config) => {
   else if (config.env === '') info('undetected environment - reporting disabled')
   else success(`valid API key found - reporting enabled for \`${config.env}\` environment`)
   if (checkConfig(config) && config.log) info('logging enabled - error details will be printed')
+}
+
+export const report = async (type: HookType, err: unknown, config: Config, meta: ErrorMeta, event?: H3Event) => {
+  if (!checkConfig(config)) return
+
+  const error = err as ErrorPayload
+  const payload: ErrorPayload = {
+    name: error.name,
+    message: error.message,
+    stack: error.stack,
+    hook: type,
+    cause: error.cause,
+    client: typeof window !== 'undefined',
+    environment: config.env,
+    os: typeof process !== 'undefined'
+      ? {
+          platform: process.platform,
+          arch: process.arch,
+          version: process.version,
+        }
+      : undefined,
+    process: typeof process !== 'undefined'
+      ? {
+          pid: process.pid,
+          version: process.version,
+        }
+      : undefined,
+  }
+
+  if (event) {
+    console.log('event is present', event.headers)
+  }
+
+  if (config.log) consola.info('[dbug] stored meta being sent:', JSON.stringify(meta))
+
+  const url = `${config.domain}/api/issue`
+  try {
+    if (config.log) {
+      consola.info(`[dbug] Error in ${type} going to ${url}`, payload)
+    }
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        key: config.key,
+        payload: JSON.stringify(payload),
+        meta: JSON.stringify(meta),
+      }),
+    })
+    const data = await response.json()
+    if (config.log) consola.success('[dbug] Error sent successfully:', data.meta)
+    return data
+  }
+  catch (err) {
+    if (config.log) consola.error(`[dbug] Failed to send error:`, err)
+  }
 }
