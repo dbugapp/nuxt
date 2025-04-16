@@ -46,15 +46,19 @@ export function useDbug(): DbugComposable {
       cause: error.cause,
       client: typeof window !== 'undefined',
       environment: config.env,
-      os: {
-        platform: process.platform,
-        arch: process.arch,
-        version: process.version,
-      },
-      process: {
-        pid: process.pid,
-        version: process.version,
-      },
+      os: typeof process !== 'undefined'
+        ? {
+            platform: process.platform,
+            arch: process.arch,
+            version: process.version,
+          }
+        : undefined,
+      process: typeof process !== 'undefined'
+        ? {
+            pid: process.pid,
+            version: process.version,
+          }
+        : undefined,
     }
 
     if (event) {

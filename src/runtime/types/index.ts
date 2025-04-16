@@ -16,12 +16,12 @@ export interface ErrorPayload {
   cause: string
   client: boolean
   environment: string
-  os: {
+  os?: {
     platform: string
     arch: string
     version: string
   }
-  process: {
+  process?: {
     pid: number
     version: string
   }
