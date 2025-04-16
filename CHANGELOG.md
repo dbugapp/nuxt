@@ -1,6 +1,10 @@
 # Changelog
 
 
+## v0.0.34
+
+[compare changes](https://github.com/dbugapp/nuxt/compare/v0.0.33...v0.0.34)
+
 ## v0.0.33
 
 [compare changes](https://github.com/dbugapp/nuxt/compare/v0.0.32...v0.0.33)
