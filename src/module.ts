@@ -28,14 +28,22 @@ export interface ModuleOptions {
    * @default false
    */
   log: boolean
+  /**
+   * Support sending nuxt-auth-utils user sessions to dbug
+   *
+   * @see https://github.com/atinux/nuxt-auth-utils
+   * @default false
+   */
+  authUtils: boolean
 }
 declare module 'nuxt/schema' {
-  interface PublicRuntimeConfig {
+  interface RuntimeConfig {
     dbug: {
       key: string
       env: string
       domain: string
       log: boolean
+      authUtils: boolean
     }
   }
 }
@@ -49,6 +57,7 @@ export default defineNuxtModule<ModuleOptions>({
     env: 'development',
     domain: 'https://dbug.nuxt.dev',
     log: false,
+    authUtils: false,
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -65,6 +74,9 @@ export default defineNuxtModule<ModuleOptions>({
       name: 'useDbug',
       from: resolver.resolve('./runtime/app/composables/dbug'),
     })
-    addServerPlugin(resolver.resolve('./runtime/server/plugins/dbug'))
+    if (options.authUtils)
+      addServerPlugin(resolver.resolve('./runtime/server/plugins/dbug-nuxt-auth-utils'))
+    else
+      addServerPlugin(resolver.resolve('./runtime/server/plugins/dbug'))
   },
 })
