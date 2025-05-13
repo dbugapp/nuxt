@@ -55,7 +55,7 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     key: '',
     env: 'development',
-    domain: 'https://dbug.nuxt.dev',
+    domain: 'https://dbug.acidjazz.workers.dev',
     log: false,
     authUtils: false,
   },
