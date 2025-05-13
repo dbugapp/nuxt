@@ -7,7 +7,7 @@ export async function dbugReport(event: H3Event | undefined, _error: unknown, us
   const config = {
     key: process.env.NUXT_DBUG_KEY || '',
     env: process.env.NUXT_DBUG_ENV,
-    domain: process.env.NUXT_DBUG_DOMAIN || 'https://dbug.nuxt.dev',
+    domain: process.env.NUXT_DBUG_DOMAIN || 'https://dbug.acidjazz.workers.dev',
     log: process.env.NUXT_DBUG_LOG === 'true' ? true : false,
   } as Required<ModuleOptions>
 
