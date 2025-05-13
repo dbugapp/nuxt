@@ -27,13 +27,14 @@ export interface ErrorPayload {
   }
 }
 
+export interface ErrorMetaUser {
+  id?: string
+  email?: string
+  name?: string
+  avatar?: string
+}
 export interface ErrorMeta {
-  user?: {
-    id?: string
-    email?: string
-    name?: string
-    avatar?: string
-  }
+  user?: ErrorMetaUser
   agent?: string
   tags?: Record<string, string | number | boolean>
 }

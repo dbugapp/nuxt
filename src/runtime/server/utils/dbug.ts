@@ -1,8 +1,9 @@
 import type { H3Event } from 'h3'
 import type { ModuleOptions } from '../../../module'
 import { report, getAgent } from '../../dbug'
+import type { ErrorMetaUser } from '#dbug'
 
-export async function dbugReport(event: H3Event | undefined, _error: unknown) {
+export async function dbugReport(event: H3Event | undefined, _error: unknown, user?: ErrorMetaUser) {
   const config = {
     key: process.env.NUXT_DBUG_KEY || '',
     env: process.env.NUXT_DBUG_ENV,
@@ -11,7 +12,7 @@ export async function dbugReport(event: H3Event | undefined, _error: unknown) {
   } as Required<ModuleOptions>
 
   const meta = {
-    user: undefined,
+    user: user,
     agent: getAgent(event),
     tags: {},
   }
