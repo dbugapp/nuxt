@@ -19,7 +19,7 @@ export interface ModuleOptions {
   /**
    * Optional custom dbug API domain
    *
-   * @default https://dbug.nuxt.dev
+   * @default https://dbug.acidjazz.workers.dev
    */
   domain: string
   /**
