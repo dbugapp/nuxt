@@ -25,7 +25,8 @@ export function useDbug(): DbugComposable {
     if (!checkConfig(config)) return
 
     setAgent(getAgent(event))
-    dbReport(type, err, config, meta.value, event)
+
+    dbReport(type, err, config, meta.value)
   }
 
   return {
