@@ -3,7 +3,18 @@ import type { ModuleOptions } from '../../../module'
 import { report, getAgent } from '../../dbug'
 import type { ErrorMetaUser } from '#dbug'
 
+function shouldIgnoreError(event: H3Event): boolean {
+  const ignoredStatusCodes = [400, 401, 403, 404, 405, 429]
+  const statusCode = event.node.res.statusCode
+
+  return ignoredStatusCodes.includes(statusCode)
+}
+
 export async function dbugReport(event: H3Event | undefined, _error: unknown, user?: ErrorMetaUser) {
+  if (event && shouldIgnoreError(event)) {
+    return
+  }
+
   const config = {
     key: process.env.NUXT_DBUG_KEY || '',
     env: process.env.NUXT_DBUG_ENV,
