@@ -1,8 +1,8 @@
+import type { NuxtApp } from 'nuxt/app'
 import type { ModuleOptions } from '../../../module'
-import { useDbug } from '#imports'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { useDbug, defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin((nuxtApp: NuxtApp) => {
   const config = useRuntimeConfig().public.dbug as Required<ModuleOptions>
   if (import.meta.client || window)
     window.addEventListener('unhandledrejection', event =>

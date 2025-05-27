@@ -32,8 +32,31 @@ export const getAgent = (event?: H3Event): string | undefined => {
   }
 }
 
+interface HttpErrorLike {
+  statusCode?: number | string
+  status?: number | string
+  response?: { status?: number | string }
+}
+
+export const shouldIgnoreError = (err: unknown): boolean => {
+  if (!err) return false
+
+  const ignoredStatusCodes = [400, 401, 403, 404, 405, 429]
+  try {
+    const error = err as HttpErrorLike
+    if (error?.statusCode && ignoredStatusCodes.includes(Number(error.statusCode))) return true
+    if (error?.status && ignoredStatusCodes.includes(Number(error.status))) return true
+    if (error?.response?.status && ignoredStatusCodes.includes(Number(error.response.status))) return true
+  }
+  catch {
+    return false
+  }
+  return false
+}
+
 export const report = async (type: HookType, err: unknown, config: Config, meta: ErrorMeta) => {
   if (!checkConfig(config)) return
+  if (shouldIgnoreError(err)) return
 
   const error = err as ErrorPayload
   const payload: ErrorPayload = {
