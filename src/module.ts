@@ -37,7 +37,7 @@ export interface ModuleOptions {
   authUtils: boolean
 }
 declare module 'nuxt/schema' {
-  interface RuntimeConfig {
+  interface PublicRuntimeConfig {
     dbug: {
       key: string
       env: string

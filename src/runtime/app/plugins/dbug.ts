@@ -1,6 +1,5 @@
 import type { ModuleOptions } from '../../../module'
-import { useDbug } from '#imports'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { useDbug, defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig().public.dbug as Required<ModuleOptions>

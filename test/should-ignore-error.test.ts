@@ -1,49 +1,31 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { H3Event } from 'h3'
-
-vi.mock('../src/runtime/dbug', () => ({
-  report: vi.fn(),
-  getAgent: vi.fn(),
-}))
+import { describe, it, expect } from 'vitest'
+import { shouldIgnoreError } from '../src/runtime/dbug'
 
 describe('shouldIgnoreError functionality', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
+  it('should correctly identify HTTP status codes to ignore', () => {
+    // Test with statusCode property
+    expect(shouldIgnoreError({ statusCode: 400 })).toBe(true)
+    expect(shouldIgnoreError({ statusCode: 401 })).toBe(true)
+    expect(shouldIgnoreError({ statusCode: 403 })).toBe(true)
+    expect(shouldIgnoreError({ statusCode: 404 })).toBe(true)
+    expect(shouldIgnoreError({ statusCode: 405 })).toBe(true)
+    expect(shouldIgnoreError({ statusCode: 429 })).toBe(true)
 
-  it('should correctly identify HTTP status codes to ignore', async () => {
-    const { dbugReport } = await import('../src/runtime/server/utils/dbug')
-    const { report } = await import('../src/runtime/dbug')
+    // Test with status property
+    expect(shouldIgnoreError({ status: 400 })).toBe(true)
+    expect(shouldIgnoreError({ status: 401 })).toBe(true)
 
-    type MockEvent = Pick<H3Event, 'node'>
-    const ignoredStatusCodes = [400, 401, 403, 404, 405, 429]
+    // Test with response.status property
+    expect(shouldIgnoreError({ response: { status: 404 } })).toBe(true)
 
-    for (const statusCode of ignoredStatusCodes) {
-      vi.clearAllMocks()
+    // Test with non-ignored status codes
+    expect(shouldIgnoreError({ statusCode: 500 })).toBe(false)
+    expect(shouldIgnoreError({ status: 502 })).toBe(false)
+    expect(shouldIgnoreError({ response: { status: 503 } })).toBe(false)
 
-      const mockEvent = {
-        node: {
-          res: { statusCode },
-        },
-      } as MockEvent
-
-      await dbugReport(mockEvent as H3Event, new Error(`Error ${statusCode}`))
-      expect(report).not.toHaveBeenCalled()
-    }
-
-    const nonIgnoredStatusCodes = [500, 502, 503]
-
-    for (const statusCode of nonIgnoredStatusCodes) {
-      vi.clearAllMocks()
-
-      const mockEvent = {
-        node: {
-          res: { statusCode },
-        },
-      } as MockEvent
-
-      await dbugReport(mockEvent as H3Event, new Error(`Error ${statusCode}`))
-      expect(report).toHaveBeenCalled()
-    }
+    // Test with non-HTTP errors
+    expect(shouldIgnoreError(new Error('Generic error'))).toBe(false)
+    expect(shouldIgnoreError(null)).toBe(false)
+    expect(shouldIgnoreError(undefined)).toBe(false)
   })
 })

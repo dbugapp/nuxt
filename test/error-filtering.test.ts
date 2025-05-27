@@ -8,6 +8,7 @@ vi.mock('../src/runtime/dbug', async () => {
   return {
     ...actual,
     report: vi.fn(),
+    checkConfig: () => true,
   }
 })
 
