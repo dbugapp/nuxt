@@ -4,7 +4,21 @@ import { shouldIgnoreError, report } from '../src/runtime/dbug'
 // Mock the fetch function to avoid actual API calls
 global.fetch = vi.fn(() => Promise.resolve({
   json: () => Promise.resolve({ meta: 'test' }),
-})) as any
+  // Adding other required Response properties
+  ok: true,
+  status: 200,
+  statusText: 'OK',
+  headers: new Headers(),
+  text: () => Promise.resolve(''),
+  blob: () => Promise.resolve(new Blob()),
+  arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+  formData: () => Promise.resolve(new FormData()),
+  bodyUsed: false,
+  redirected: false,
+  type: 'basic',
+  url: '',
+  clone: () => ({} as Response),
+})) as unknown as typeof global.fetch
 
 describe('shared error filtering', () => {
   it('should identify errors with statusCode property', () => {
