@@ -61,20 +61,20 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    nuxt.options.runtimeConfig.dbug = defu({
+    nuxt.options.runtimeConfig.public.dbug = defu({
       key: process.env.NUXT_DBUG_KEY || '',
       env: process.env.NUXT_DBUG_ENV,
       domain: process.env.NUXT_DBUG_DOMAIN,
       log: process.env.NUXT_DBUG_LOG === 'true' ? true : false,
     }, options)
     nuxt.options.alias['#dbug'] = resolver.resolve('./runtime/types/index')
-    nuxt.hook('modules:done', () => reportConfig(nuxt.options.runtimeConfig.dbug))
+    nuxt.hook('modules:done', () => reportConfig(nuxt.options.runtimeConfig.public.dbug as ModuleOptions))
     addPlugin(resolver.resolve('./runtime/app/plugins/dbug'))
     addImports({
       name: 'useDbug',
       from: resolver.resolve('./runtime/app/composables/dbug'),
     })
-    if (options.authUtils)
+    if (nuxt.options.runtimeConfig.dbug.authUtils)
       addServerPlugin(resolver.resolve('./runtime/server/plugins/dbug-nuxt-auth-utils'))
     else
       addServerPlugin(resolver.resolve('./runtime/server/plugins/dbug'))
