@@ -1,6 +1,21 @@
 # Changelog
 
 
+## v0.0.40
+
+[compare changes](https://github.com/dbugapp/nuxt/compare/v0.0.35...v0.0.40)
+
+### 🏡 Chore
+
+- **release:** V0.0.36 ([33757de](https://github.com/dbugapp/nuxt/commit/33757de))
+- **release:** V0.0.37 ([aa2192b](https://github.com/dbugapp/nuxt/commit/aa2192b))
+- **release:** V0.0.38 ([48fa115](https://github.com/dbugapp/nuxt/commit/48fa115))
+- **release:** V0.0.39 ([a56005f](https://github.com/dbugapp/nuxt/commit/a56005f))
+
+### ❤️ Contributors
+
+- Kevin Olson ([@acidjazz](https://github.com/acidjazz))
+
 ## v0.0.39
 
 [compare changes](https://github.com/dbugapp/nuxt/compare/v0.0.38...v0.0.39)
