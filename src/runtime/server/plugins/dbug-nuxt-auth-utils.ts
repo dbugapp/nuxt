@@ -6,6 +6,7 @@ import { getUserSession } from '#imports'
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('error', async (error, { event }) => {
     const session = await getUserSession(event)
+    console.log(session?.user)
     await dbugReport(event, error, session?.user)
   })
 })

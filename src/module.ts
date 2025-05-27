@@ -69,7 +69,10 @@ export default defineNuxtModule<ModuleOptions>({
     }, options)
     nuxt.options.alias['#dbug'] = resolver.resolve('./runtime/types/index')
     nuxt.hook('modules:done', () => reportConfig(nuxt.options.runtimeConfig.public.dbug as ModuleOptions))
-    addPlugin(resolver.resolve('./runtime/app/plugins/dbug'))
+    if (options.authUtils)
+      addPlugin(resolver.resolve('./runtime/app/plugins/dbug-nuxt-auth-utils'))
+    else
+      addPlugin(resolver.resolve('./runtime/app/plugins/dbug'))
     addImports({
       name: 'useDbug',
       from: resolver.resolve('./runtime/app/composables/dbug'),
