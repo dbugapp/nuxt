@@ -74,7 +74,7 @@ export default defineNuxtModule<ModuleOptions>({
       name: 'useDbug',
       from: resolver.resolve('./runtime/app/composables/dbug'),
     })
-    if (nuxt.options.runtimeConfig.dbug.authUtils)
+    if (options.authUtils)
       addServerPlugin(resolver.resolve('./runtime/server/plugins/dbug-nuxt-auth-utils'))
     else
       addServerPlugin(resolver.resolve('./runtime/server/plugins/dbug'))
