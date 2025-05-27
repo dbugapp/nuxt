@@ -37,7 +37,7 @@ export interface ModuleOptions {
   authUtils: boolean
 }
 declare module 'nuxt/schema' {
-  interface PublicRuntimeConfig {
+  interface RuntimeConfig {
     dbug: {
       key: string
       env: string
@@ -61,14 +61,14 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    nuxt.options.runtimeConfig.public.dbug = defu({
+    nuxt.options.runtimeConfig.dbug = defu({
       key: process.env.NUXT_DBUG_KEY || '',
       env: process.env.NUXT_DBUG_ENV,
       domain: process.env.NUXT_DBUG_DOMAIN,
       log: process.env.NUXT_DBUG_LOG === 'true' ? true : false,
     }, options)
     nuxt.options.alias['#dbug'] = resolver.resolve('./runtime/types/index')
-    nuxt.hook('modules:done', () => reportConfig(nuxt.options.runtimeConfig.public.dbug))
+    nuxt.hook('modules:done', () => reportConfig(nuxt.options.runtimeConfig.dbug))
     addPlugin(resolver.resolve('./runtime/app/plugins/dbug'))
     addImports({
       name: 'useDbug',
